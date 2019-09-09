@@ -48,8 +48,8 @@ Following is the example of multus config file, in `/etc/cni/net.d/`.
 
 User should chose following parameters combination (`clusterNetwork`+`defaultNetworks` or `delegates`):
 
-* `clusterNetwork` (string, required): default CNI network for pods, used in kubernetes cluster (Pod IP and so on): name of network-attachment-definition, CNI json file name (without extention, .conf/.conflist) or directory for CNI config file
-* `defaultNetworks` ([]string, required): default CNI network attachment: name of network-attachment-definition, CNI json file name (without extention, .conf/.conflist) or directory for CNI config file
+* `clusterNetwork` (string, required): default CNI network for pods, used in kubernetes cluster (Pod IP and so on): name of nad, CNI json file name (without extention, .conf/.conflist) or directory for CNI config file
+* `defaultNetworks` ([]string, required): default CNI network attachment: name of nad, CNI json file name (without extention, .conf/.conflist) or directory for CNI config file
 * `systemNamespaces` ([]string, optional): list of namespaces for Kubernetes system (namespaces listed here will not have `defaultNetworks` added)
 * `multusNamespace` (string, optional): namespace for `clusterNetwork`/`defaultNetworks`
 * `delegates` ([]map,required): number of delegate details in the Multus
@@ -188,7 +188,7 @@ NAME           AGE
 macvlan-conf   11s
 ```
 
-Next, we'll create a pod with an annotation that references the privileged namespace. Pay particular attention to the annotation that reads `k8s.v1.cni.cncf.io/networks: privileged/macvlan-conf` -- where it contains a reference to a `namespace/configuration-name` formatted network attachment name. In this case referring to the `macvlan-conf` in the namespace called `privileged`.
+Next, we'll create a pod with an annotation that references the privileged namespace. Pay particular attention to the annotation that reads `k8s.v1.cni.cncf.io/mynetworks: privileged/macvlan-conf` -- where it contains a reference to a `namespace/configuration-name` formatted network attachment name. In this case referring to the `macvlan-conf` in the namespace called `privileged`.
 
 ```
 # Show the yaml for a pod.
@@ -198,7 +198,7 @@ kind: Pod
 metadata:
   name: samplepod
   annotations:
-    k8s.v1.cni.cncf.io/networks: privileged/macvlan-conf
+    k8s.v1.cni.cncf.io/mynetworks: privileged/macvlan-conf
 spec:
   containers:
   - name: samplepod
@@ -234,7 +234,7 @@ kind: Pod
 metadata:
   name: samplepod
   annotations:
-    k8s.v1.cni.cncf.io/networks: macvlan-conf
+    k8s.v1.cni.cncf.io/mynetworks: macvlan-conf
 spec:
   containers:
   - name: samplepod
@@ -262,7 +262,7 @@ Example use cases may include:
 
 Follow these steps to specify the default network on a pod-by-pod basis:
 
-1. First, you need to define all your cluster networks as network-attachment-definition objects.
+1. First, you need to define all your cluster networks as nad objects.
 
 2. Next, you can specify the network you want in pods with the `v1.multus-cni.io/default-network` annotation. Pods which do not specify this annotation will keep using the CNI as defined in the Multus config file.
 

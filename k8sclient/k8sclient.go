@@ -39,7 +39,7 @@ import (
 const (
 	resourceNameAnnot      = "k8s.v1.cni.cncf.io/resourceName"
 	defaultNetAnnot        = "v1.multus-cni.io/default-network"
-	networkAttachmentAnnot = "k8s.v1.cni.cncf.io/networks"
+	networkAttachmentAnnot = "k8s.v1.cni.cncf.io/mynetworks"
 )
 
 // NoK8sNetworkError indicates error, no network in kubernetes
@@ -134,7 +134,7 @@ func setPodNetworkAnnotation(client KubeClient, namespace string, pod *v1.Pod, n
 		pod.Annotations = make(map[string]string)
 	}
 
-	pod.Annotations["k8s.v1.cni.cncf.io/networks-status"] = networkstatus
+	pod.Annotations["k8s.v1.cni.cncf.io/mynetworks-status"] = networkstatus
 
 	pod = pod.DeepCopy()
 	var err error
@@ -345,7 +345,9 @@ func cniConfigFromNetworkResource(customResource *types.NetworkAttachmentDefinit
 func getKubernetesDelegate(client KubeClient, net *types.NetworkSelectionElement, confdir string, pod *v1.Pod, resourceMap map[string]*types.ResourceInfo) (*types.DelegateNetConf, map[string]*types.ResourceInfo, error) {
 
 	logging.Debugf("getKubernetesDelegate: %v, %v, %s", client, net, confdir)
-	rawPath := fmt.Sprintf("/apis/k8s.cni.cncf.io/v1/namespaces/%s/network-attachment-definitions/%s", net.Namespace, net.Name)
+	// rawPath := fmt.Sprintf("/apis/k8s.cni.cncf.io/v1/namespaces/%s/nads/%s", net.Namespace, net.Name)
+	rawPath := fmt.Sprintf("/apis/k8s.cni.cncf.io/v1/namespaces/%s/nads/%s", net.Namespace, net.Name)
+
 	netData, err := client.GetRawWithPath(rawPath)
 	if err != nil {
 		return nil, resourceMap, logging.Errorf("getKubernetesDelegate: failed to get network resource, refer Multus README.md for the usage guide: %v", err)
@@ -570,7 +572,9 @@ func GetNetworkDelegates(k8sclient KubeClient, pod *v1.Pod, networks []*types.Ne
 
 func getDefaultNetDelegateCRD(client KubeClient, net, confdir, namespace string) (*types.DelegateNetConf, error) {
 	logging.Debugf("getDefaultNetDelegateCRD: %v, %v, %s, %s", client, net, confdir, namespace)
-	rawPath := fmt.Sprintf("/apis/k8s.cni.cncf.io/v1/namespaces/%s/network-attachment-definitions/%s", namespace, net)
+	// rawPath := fmt.Sprintf("/apis/k8s.cni.cncf.io/v1/namespaces/%s/nads/%s", namespace, net)
+	rawPath := fmt.Sprintf("/apis/k8s.cni.cncf.io/v1/namespaces/%s/nads/%s", namespace, net)
+
 	netData, err := client.GetRawWithPath(rawPath)
 	if err != nil {
 		return nil, logging.Errorf("getDefaultNetDelegateCRD: failed to get network resource, refer Multus README.md for the usage guide: %v", err)

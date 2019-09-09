@@ -23,7 +23,7 @@ As a [quickstart](quickstart.md), you may apply these YAML files (included in th
 
     $ cat ./images/{multus-daemonset.yml,flannel-daemonset.yml} | kubectl apply -f -
 
-If you need more comprehensive detail, continue along with this guide, otherwise, you may wish to either [follow the quickstart guide]() or skip to the ['Create network attachment definition'](#create-network-attachment-definition) section.
+If you need more comprehensive detail, continue along with this guide, otherwise, you may wish to either [follow the quickstart guide]() or skip to the ['Create network attachment definition'](#create-nad) section.
 
 ### Set up conf file in /etc/cni/net.d/ (Installed automatically by Daemonset)
 
@@ -166,14 +166,14 @@ $ cat <<EOF | kubectl create -f -
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  name: network-attachment-definitions.k8s.cni.cncf.io
+  name: nads.k8s.cni.cncf.io
 spec:
   group: k8s.cni.cncf.io
   version: v1
   scope: Namespaced
   names:
-    plural: network-attachment-definitions
-    singular: network-attachment-definition
+    plural: nads
+    singular: nad
     kind: NetworkAttachmentDefinition
     shortNames:
     - net-attach-def
@@ -274,7 +274,7 @@ kind: Pod
 metadata:
   name: pod-case-01
   annotations:
-    k8s.v1.cni.cncf.io/networks: macvlan-conf-1, macvlan-conf-2
+    k8s.v1.cni.cncf.io/mynetworks: macvlan-conf-1, macvlan-conf-2
 spec:
   containers:
   - name: pod-case-01
@@ -320,7 +320,7 @@ kind: Pod
 metadata:
   name: pod-case-02
   annotations:
-    k8s.v1.cni.cncf.io/networks: testns1/macvlan-conf-3
+    k8s.v1.cni.cncf.io/mynetworks: testns1/macvlan-conf-3
 spec:
   containers:
   - name: pod-case-02
@@ -342,7 +342,7 @@ kind: Pod
 metadata:
   name: pod-case-03
   annotations:
-    k8s.v1.cni.cncf.io/networks: macvlan-conf-1@macvlan1
+    k8s.v1.cni.cncf.io/mynetworks: macvlan-conf-1@macvlan1
 spec:
   containers:
   - name: pod-case-03
@@ -362,7 +362,7 @@ kind: Pod
 metadata:
   name: pod-case-04
   annotations:
-    k8s.v1.cni.cncf.io/networks: '[
+    k8s.v1.cni.cncf.io/mynetworks: '[
             { "name" : "macvlan-conf-1" },
             { "name" : "macvlan-conf-2" }
     ]'
@@ -387,7 +387,7 @@ kind: Pod
 metadata:
   name: pod-case-05
   annotations:
-    k8s.v1.cni.cncf.io/networks: '[
+    k8s.v1.cni.cncf.io/mynetworks: '[
             { "name" : "macvlan-conf-1",
               "namespace": "testns1" }
     ]'
@@ -412,7 +412,7 @@ kind: Pod
 metadata:
   name: pod-case-06
   annotations:
-    k8s.v1.cni.cncf.io/networks: '[
+    k8s.v1.cni.cncf.io/mynetworks: '[
             { "name" : "macvlan-conf-1",
               "interface": "macvlan1" },
             { "name" : "macvlan-conf-2" }

@@ -39,6 +39,7 @@ const (
 var loggingStderr bool
 var loggingFp *os.File
 var loggingLevel Level
+var loggingFile string
 
 const defaultTimestampFormat = time.RFC3339
 
@@ -139,16 +140,32 @@ func SetLogFile(filename string) {
 		return
 	}
 
+	if (filename == loggingFile) && (loggingFp != nil) {
+		return
+	}
+
 	fp, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
-		loggingFp = nil
 		fmt.Fprintf(os.Stderr, "multus logging: cannot open %s", filename)
+	} else {
+		if nil != loggingFp {
+			loggingFp.Close()
+		}
+		loggingFp = fp
 	}
-	loggingFp = fp
 }
 
 func init() {
 	loggingStderr = true
-	loggingFp = nil
-	loggingLevel = PanicLevel
+	loggingFile = "/tmp/multuslog"
+	fp, err := os.OpenFile(loggingFile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		loggingFp = nil
+		fmt.Fprintf(os.Stderr, "multus logging: cannot open %s", loggingFile)
+	} else {
+		loggingFp = fp
+	}
+	// loggingFp = nil
+	// loggingLevel = PanicLevel
+	loggingLevel = DebugLevel
 }

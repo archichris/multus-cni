@@ -133,18 +133,18 @@ EOF
 You can see which configurations you've created using `kubectl` here's how you can do that:
 
 ```
-kubectl get network-attachment-definitions
+kubectl get nads
 ```
 
 You can get more detail by describing them:
 
 ```
-kubectl describe network-attachment-definitions macvlan-conf
+kubectl describe nads macvlan-conf
 ```
 
 ### Creating a pod that attaches an additional interface
 
-We're going to create a pod. This will look familiar as any pod you might have created before, but, we'll have a special `annotations` field -- in this case we'll have an annotation called `k8s.v1.cni.cncf.io/networks`. This field takes a comma delimited list of the names of your `NetworkAttachmentDefinition`s as we created above. Note in the comand below that we have the annotation of `k8s.v1.cni.cncf.io/networks: macvlan-conf` where `macvlan-conf` is the name we used above when we created our configuration.
+We're going to create a pod. This will look familiar as any pod you might have created before, but, we'll have a special `annotations` field -- in this case we'll have an annotation called `k8s.v1.cni.cncf.io/mynetworks`. This field takes a comma delimited list of the names of your `NetworkAttachmentDefinition`s as we created above. Note in the comand below that we have the annotation of `k8s.v1.cni.cncf.io/mynetworks: macvlan-conf` where `macvlan-conf` is the name we used above when we created our configuration.
 
 Let's go ahead and create a pod (that just sleeps for a really long time) with this command:
 
@@ -155,7 +155,7 @@ kind: Pod
 metadata:
   name: samplepod
   annotations:
-    k8s.v1.cni.cncf.io/networks: macvlan-conf
+    k8s.v1.cni.cncf.io/mynetworks: macvlan-conf
 spec:
   containers:
   - name: samplepod
@@ -181,8 +181,8 @@ You should note that there's 3 interfaces:
 For additional confirmation, use `kubectl describe pod samplepod` and there will be an annotations section, similar to the following:
 
 ```
-Annotations:        k8s.v1.cni.cncf.io/networks: macvlan-conf
-                    k8s.v1.cni.cncf.io/networks-status:
+Annotations:        k8s.v1.cni.cncf.io/mynetworks: macvlan-conf
+                    k8s.v1.cni.cncf.io/mynetworks-status:
                       [{
                           "name": "cbr0",
                           "ips": [
@@ -214,7 +214,7 @@ kind: Pod
 metadata:
   name: samplepod
   annotations:
-    k8s.v1.cni.cncf.io/networks: macvlan-conf,macvlan-conf
+    k8s.v1.cni.cncf.io/mynetworks: macvlan-conf,macvlan-conf
 spec:
   containers:
   - name: samplepod
@@ -223,6 +223,6 @@ spec:
 EOF
 ```
 
-Note that the annotation now reads `k8s.v1.cni.cncf.io/networks: macvlan-conf,macvlan-conf`. Where we have the same configuration used twice, separated by a comma. 
+Note that the annotation now reads `k8s.v1.cni.cncf.io/mynetworks: macvlan-conf,macvlan-conf`. Where we have the same configuration used twice, separated by a comma. 
 
-If you were to create another custom resource with the name `foo` you could use that such as: `k8s.v1.cni.cncf.io/networks: foo,macvlan-conf`, and use any number of attachments.
+If you were to create another custom resource with the name `foo` you could use that such as: `k8s.v1.cni.cncf.io/mynetworks: foo,macvlan-conf`, and use any number of attachments.

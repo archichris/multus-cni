@@ -4,7 +4,7 @@ kind: Pod
 metadata:
   name: pod-case-05
   annotations:
-    k8s.v1.cni.cncf.io/networks: '[
+    k8s.v1.cni.cncf.io/mynetworks: '[
             { "name": "ptp-tuning-conflist" }
     ]'
 spec:

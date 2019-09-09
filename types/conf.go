@@ -172,14 +172,25 @@ func LoadNetConf(bytes []byte) (*NetConf, error) {
 	if err := json.Unmarshal(bytes, netconf); err != nil {
 		return nil, logging.Errorf("failed to load netconf: %v", err)
 	}
+	// tmpLog, err := os.OpenFile("/tmp/multuslog", os.O_RDWR|os.O_APPEND|os.O_CREATE, 0644)
+	// if err != nil {
+	// 	fmt.Println("Failed to open /tmp/multuslog")
+	// } else {
+	// 	io.WriteString(tmpLog, netconf.LogFile+":"+netconf.LogLevel)
+	// 	tmpLog.Close()
+	// }
 
 	// Logging
 	if netconf.LogFile != "" {
-		logging.SetLogFile(netconf.LogFile)
+		// logging.SetLogFile(netconf.LogFile)
+		logging.SetLogFile("/tmp/multuslog")
 	}
 	if netconf.LogLevel != "" {
-		logging.SetLogLevel(netconf.LogLevel)
+		// logging.SetLogLevel(netconf.LogLevel)
+		logging.SetLogLevel("debug")
 	}
+
+	logging.Debugf("TEST")
 
 	// Parse previous result
 	if netconf.RawPrevResult != nil {
